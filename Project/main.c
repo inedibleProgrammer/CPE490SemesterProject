@@ -1,7 +1,7 @@
 /***********************************************************
 	Project:	Semester Project
 	Company:	CPE 490 Embedded Systems
-	Author:		Andrew Davies
+	Author:		Andrew Davies & John Bugay
 	File:		main.c
 	Purpose:	main program code
 ***********************************************************/
@@ -10,17 +10,19 @@
 #include "gui.h"
 #include "keypad.h"
 #include "interrupt.h"
+#include "JTAG_UART.h"
 
 //**Prototype**//
-void main(void);
 
 //**Global Variables**//
-char ps2interrupt;	//used in isr.c
-char enterpress;	//used in keypad.c
+int ps2Interrupt;		//used in isr.c
+int encoderInterrupt;	//used in isr.c
+int monitorInterrupt;	//used in isr.c
+char enterPress;		//used in keypad.c
 
 //**Program Code**//
 
-void main(void)
+int main(void)
 {
 	//**Initialize Interrupts**//
 	disable_A9_interrupts();
@@ -35,15 +37,29 @@ void main(void)
 	InitializeStructs();
 	while(1)
 	{
-		if(ps2interrupt == 1)
+		if(ps2Interrupt == 1)
 		{
-			ps2interrupt = 0;
+			ps2Interrupt = 0;
+          	PS2_Read();
+          	put_jtag('A');
 			Key();
 		}
-		if(enterpress == 1)
+		if(monitorInterrupt == 1)
 		{
-			enterpress = 0;
+			put_jtag('B');
+			monitorInterrupt = 0;
+		}
+		if(encoderInterrupt == 1)
+		{
+			put_jtag('C');
+			encoderInterrupt = 0;
+		}
+		if(enterPress == 1)
+		{
+			enterPress = 0;
 
 		}
 	}
+  int _end_ = 0;
+  return _end_;
 }

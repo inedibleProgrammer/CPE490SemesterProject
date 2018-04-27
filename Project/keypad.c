@@ -14,7 +14,7 @@
 
 //**Global Variables**//
 int keyData;	//used int isr.c
-extern char enterpress;
+extern char enterPress;
 
 //**Function Code**//
 
@@ -46,7 +46,7 @@ void Key(void)
 	{
 		if(inprpm.cTotal[2] != ' ')
 		{
-			enterpress = 1;
+			enterPress = 1;
 			setrpm = inprpm;
 			InputRPM_Clear();
 			Clear_inprpm();

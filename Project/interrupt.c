@@ -1,7 +1,7 @@
 /***********************************************************
     Project:    Semester Project
     Company:    CPE 490 Embedded Systems
-    Author:     Andrew Davies
+    Author:     Andrew Davies & John Bugay
     File:       interrupt.c
     Purpose:
         defines exception vectors for the A9 processor
@@ -9,7 +9,7 @@
         provides code that initializes the generic interrupt controller
 ***********************************************************/
 
-//**Ijncludes**//
+//**Includes**//
 #include "interrupt.h"
 #include "isr.h"
 #include "interrupt_id.h"
@@ -29,14 +29,11 @@ void __attribute__ ((interrupt)) __cs3_isr_irq (void)
         ButtonsISR ();
 */
 
-    if(interrupt_ID == MPCORE_PRIV_TIMER_IRQ)
-        TimerISR();
+    //if(interrupt_ID == MPCORE_PRIV_TIMER_IRQ)
+       // TimerISR();
 
     if(interrupt_ID == HPS_TIMER0_IRQ)
-        HPS0_ISR();  
-
-    if(interrupt_ID == PS2_IRQ)
-        PS2ISR();
+        HPSTimer0ISR();  
     else
         while (1);                          // if unexpected, then stay here
 
@@ -111,6 +108,7 @@ void config_GIC(void) // STEP 3 IN SECTION 3.1 OF USING THE ARM GENERIC INTERRUP
     // config_interrupt (KEYS_IRQ, CPU0);
     // config_interrupt(MPCORE_PRIV_TIMER_IRQ, CPU0);
     config_interrupt (PS2_IRQ, CPU0);
+    config_interrupt (HPS_TIMER0_IRQ, CPU0);
     
     // Set Interrupt Priority Mask Register (ICCPMR). Enable interrupts of all priorities 
     address = MPCORE_GIC_CPUIF + ICCPMR;
@@ -151,24 +149,18 @@ void config_interrupt (int N, int CPU_target)
 
 void configInterupt()
 {
-    // volatile int * KEY_ptr = (int *) KEY_BASE;              // pushbutton KEY base address
-    // volatile int* timerPtr = (int*) MPCORE_PRIV_TIMER;      // timer base address
-    volatile int * PS2_ptr = (int *) PS2_BASE;                 // PS/2 base address
-
-    *(PS2_ptr) = 0xFF;      //reset
-    *(PS2_ptr + 1) = 0x1;   //write to the PS/2 Control register to enable interrupts
+    volatile int* timerPtr = (int*) MPCORE_PRIV_TIMER;      // timer base address
+    volatile int* HPSTimer0Ptr = (int*) HPS_TIMER0_BASE;
 
     *(timerPtr) = 2000;             // Interrupt every 0.001s
     *(timerPtr + 2) |= (100 << 8);  // Prescale 100
     *(timerPtr + 2) |= 0x07;        // Turn on I, A, and E
 
-    *(HPSTimerPtr + 2) &= ~(1 << 0);    // E = 0
-    *(HPSTimerPtr) = 100000000;         // load value
-    *(HPSTimerPtr + 2) |= (1 << 1);     // M = 1
-    *(HPSTimerPtr + 2) |= (1 << 0);     // E = 1
-    *(HPSTimerPtr + 2) &= ~(1 << 3);    // I = 0
+    *(HPSTimer0Ptr + 2) &= ~(1 << 0);    // E = 0
+    *(HPSTimer0Ptr) = 200000000;         // load value
+    *(HPSTimer0Ptr + 2) |= (1 << 1);     // M = 1
+    *(HPSTimer0Ptr + 2) |= (1 << 0);     // E = 1
+    *(HPSTimer0Ptr + 2) &= ~(1 << 2);    // I = 0 Active low
 
 //  *(KEY_ptr + 2) = 0x01;       // enable interrupts for KEY0
-
-
 }
