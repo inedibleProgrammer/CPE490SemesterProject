@@ -12,6 +12,9 @@
 #include "struct.h"
 #include "address_map.h"
 
+//**Debugging**//
+#include "JTAG_UART.h"
+
 //**Global Variables**//
 int keyData;	//used int isr.c
 extern char enterPress;
@@ -40,6 +43,11 @@ void Key(void)
 		inprpm.cTotal[2] = inprpm.cOne;
 
 		InputRPM_Write(inprpm.cTotal);
+
+		//**Debuging**//
+		//put_jtag(GetCharacter(inprpm.iHundred));
+		//put_jtag(GetCharacter(inprpm.iTen));
+		//put_jtag(GetCharacter(inprpm.iOne));
 	}
 
 	if(key == 0xA)
@@ -50,7 +58,13 @@ void Key(void)
 			setrpm = inprpm;
 			InputRPM_Clear();
 			Clear_inprpm();
-			Total_setrpm();
+
+			//**Debuging**//
+			put_jtag(GetCharacter(setrpm.iHundred));
+			//put_jtag(GetCharacter(setrpm.iTen));
+			//put_jtag(GetCharacter(setrpm.iOne));
+			put_jtag('A');
+
 			if(setrpm.iTotal > 230)
 			{
 				setrpm.iTotal = 230;

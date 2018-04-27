@@ -7,3 +7,4 @@
 ***********************************************************/
 
 void PS2ISR(void); //interrupt service routine for the PS2
+void HPSTimer0ISR();

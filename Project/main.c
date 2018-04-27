@@ -11,6 +11,8 @@
 #include "keypad.h"
 #include "interrupt.h"
 #include "JTAG_UART.h"
+#include "ps2.h"
+#include "isr.h"
 
 //**Prototype**//
 
@@ -34,15 +36,14 @@ int main(void)
 
 	//**Initialize GUI**//
 	GUI_Setup();
-	//**Initialize Structs**//
-	InitializeStructs();
+	
 	while(1)
 	{
 		if(ps2Interrupt == 1)
 		{
 			ps2Interrupt = 0;
           	PS2_Read();
-          	put_jtag('A');
+          	// put_jtag('A');
           	if(goodKey == 1)
             {
               	
@@ -52,12 +53,13 @@ int main(void)
 		}
 		if(monitorInterrupt == 1)
 		{
-			put_jtag('B');
+			//put_jtag('B');
 			monitorInterrupt = 0;
 		}
 		if(encoderInterrupt == 1)
 		{
-			put_jtag('C');
+			//put_jtag('C');
+			//put_jtag('\n');
 			encoderInterrupt = 0;
 		}
 	}

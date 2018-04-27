@@ -157,7 +157,7 @@ void configInterupt()
     *(timerPtr + 2) |= 0x07;        // Turn on I, A, and E
 
     *(HPSTimer0Ptr + 2) &= ~(1 << 0);    // E = 0
-    *(HPSTimer0Ptr) = 200000000;         // load value
+    *(HPSTimer0Ptr) = 25000000;         // load value
     *(HPSTimer0Ptr + 2) |= (1 << 1);     // M = 1
     *(HPSTimer0Ptr + 2) |= (1 << 0);     // E = 1
     *(HPSTimer0Ptr + 2) &= ~(1 << 2);    // I = 0 Active low

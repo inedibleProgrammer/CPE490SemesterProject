@@ -29,5 +29,5 @@ struct RPM
 //**Prototypes**//
 char GetCharacter(int);
 void Clear_inprpm();
-void Total_setrpm(void);
+void Total_inprpm(void);
 void InitializeStructs(void);
