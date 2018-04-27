@@ -36,6 +36,10 @@ int main(void)
 
 	//**Initialize GUI**//
 	GUI_Setup();
+
+    //GPIO
+    volatile int* GPIOPtr = (int*)0xFF200060;
+    *(GPIOPtr + 1) |= (1 << 0); // Set D0 as output
 	
 	while(1)
 	{

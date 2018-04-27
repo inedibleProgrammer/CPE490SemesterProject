@@ -34,6 +34,8 @@ void __attribute__ ((interrupt)) __cs3_isr_irq (void)
 
     if(interrupt_ID == HPS_TIMER0_IRQ)
         HPSTimer0ISR();  
+    else if(interrupt_ID == HPS_TIMER1_IRQ)
+        HPSTimer1ISR();
     else
         while (1);                          // if unexpected, then stay here
 
@@ -109,6 +111,7 @@ void config_GIC(void) // STEP 3 IN SECTION 3.1 OF USING THE ARM GENERIC INTERRUP
     // config_interrupt(MPCORE_PRIV_TIMER_IRQ, CPU0);
     config_interrupt (PS2_IRQ, CPU0);
     config_interrupt (HPS_TIMER0_IRQ, CPU0);
+    config_interrupt (HPS_TIMER1_IRQ, CPU0);
     
     // Set Interrupt Priority Mask Register (ICCPMR). Enable interrupts of all priorities 
     address = MPCORE_GIC_CPUIF + ICCPMR;

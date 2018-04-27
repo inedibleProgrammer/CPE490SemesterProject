@@ -37,4 +37,46 @@ void HPSTimer0ISR()   //half second period
     END = *(HPSTimer0Ptr + 3);  //resets HPSTimer0
 }
 
+void HPSTimer1ISR()
+{
+    volatile int* HPSTimer1Ptr = (int*) HPS_TIMER1_BASE;
+    volatile int* SwitchesPtr = (int*) SW_BASE;
+    
+
+    double switches = ( ( *(SwitchesPtr) & 0x3FF) / 1023.0 );
+    static direction = 0;
+
+    if(switches == 0)
+    {
+        // *(GPIOPtr) &= ~(1 << 0);
+        *(GPIOPtr) = 0;
+    }
+    else if(switches == 1.0)
+    {
+        // *(GPIOPtr) |= (1 << 0);
+        *(GPIOPtr) = 1;
+    }
+    else
+    {
+        if(direction == 1)
+        {
+            // *(GPIOPtr) &= ~(1 << 0); // D0 = low
+            *(GPIOPtr) = 1;
+            SetPWM(1000, switches);
+
+            direction = 0;
+        }
+        else // direction == 0
+        {
+            // *(GPIOPtr) |= (1 << 0); // D0 = high
+            *(GPIOPtr) = 0;
+            SetPWM( 1000, (1.0 - switches) );
+
+            direction = 1;
+        }
+    }
+
+    END = *(HPSTimer1Ptr + 3);
+}
+
 //**End of File**//
