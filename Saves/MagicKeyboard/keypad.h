@@ -2,9 +2,10 @@
 	Project:	Semester Project
 	Company:	CPE 490 Embedded Systems
 	Author:		Andrew Davies
-	File:		isr.h
-	Purpose:	prototypes for isr.c
+	File:		keypad.h
+	Purpose:	prototypes for keypad.c
 ***********************************************************/
 
-void PS2ISR(void); //interrupt service routine for the PS2
-void HPSTimer0ISR();
+//**Prototypes**//
+void Key(void);
+char GetKey(int);

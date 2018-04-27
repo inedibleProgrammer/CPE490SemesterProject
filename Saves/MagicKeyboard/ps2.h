@@ -1,10 +1,9 @@
 /***********************************************************
 	Project:	Semester Project
 	Company:	CPE 490 Embedded Systems
-	Author:		Andrew Davies
-	File:		isr.h
-	Purpose:	prototypes for isr.c
+	Author:		Andrew Davies & Boogie
+	File:		PS2.h
+	Purpose:	
 ***********************************************************/
 
-void PS2ISR(void); //interrupt service routine for the PS2
-void HPSTimer0ISR();
+void PS2_Read(void);
