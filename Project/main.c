@@ -18,6 +18,7 @@
 int ps2Interrupt;		//used in isr.c
 int encoderInterrupt;	//used in isr.c
 int monitorInterrupt;	//used in isr.c
+int goodKey;			//used in ps2.c
 char enterPress;		//used in keypad.c
 
 //**Program Code**//
@@ -42,7 +43,12 @@ int main(void)
 			ps2Interrupt = 0;
           	PS2_Read();
           	put_jtag('A');
-			Key();
+          	if(goodKey == 1)
+            {
+              	
+              	Key();
+                goodKey = 0;
+            }
 		}
 		if(monitorInterrupt == 1)
 		{
@@ -54,12 +60,9 @@ int main(void)
 			put_jtag('C');
 			encoderInterrupt = 0;
 		}
-		if(enterPress == 1)
-		{
-			enterPress = 0;
-
-		}
 	}
-  int _end_ = 0;
-  return _end_;
+	int _end_ = 0;
+  	return _end_;
 }
+
+//**End of File**//
