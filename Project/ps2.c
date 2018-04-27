@@ -16,6 +16,7 @@ extern int goodKey;     //declared in main.c
 void PS2_Read(void)
 {
     volatile int* PS2_ptr = (int*) PS2_BASE;
+    int PS2_data;
     static char flag = 0;   //holds if release accured
     char waiting = 1;
     int trash = 0;          //holds current PS2 read
@@ -24,8 +25,9 @@ void PS2_Read(void)
 
     while(waiting == 1)                              //if unread data
     {
-        ravail = (*(PS2_ptr) & 0xFFFF0000) >> 16;
-        rvalid = (*(PS2_ptr) & 0x8000) >> 15;
+        PS2_data = *(PS2_ptr)
+        ravail = (PS2_data & 0xFFFF0000) >> 16;
+        rvalid = (PS2_data & 0x8000) >> 15;
 
         if(ravail == 0)
             return;
