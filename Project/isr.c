@@ -8,6 +8,7 @@
 //**Includes**//
 #include "isr.h"
 #include "address_map.h"
+#include "pwm.h"
 
 //**Global Valiables**//
 extern int ps2Interrupt;      //declared in main.c
@@ -41,7 +42,7 @@ void HPSTimer1ISR()
 {
     volatile int* HPSTimer1Ptr = (int*) HPS_TIMER1_BASE;
     volatile int* SwitchesPtr = (int*) SW_BASE;
-    
+
 
     double switches = ( ( *(SwitchesPtr) & 0x3FF) / 1023.0 );
     static direction = 0;
