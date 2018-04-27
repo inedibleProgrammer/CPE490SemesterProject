@@ -153,17 +153,25 @@ void config_interrupt (int N, int CPU_target)
 void configInterupt()
 {
     volatile int* timerPtr = (int*) MPCORE_PRIV_TIMER;      // timer base address
+
     volatile int* HPSTimer0Ptr = (int*) HPS_TIMER0_BASE;
 
+    volatile int* HPSTimer1Ptr = (int*) HPS_TIMER1_BASE;
+
+    // Private Timer
     *(timerPtr) = 2000;             // Interrupt every 0.001s
     *(timerPtr + 2) |= (100 << 8);  // Prescale 100
     *(timerPtr + 2) |= 0x07;        // Turn on I, A, and E
 
+    // HPS0
     *(HPSTimer0Ptr + 2) &= ~(1 << 0);    // E = 0
     *(HPSTimer0Ptr) = 25000000;         // load value
     *(HPSTimer0Ptr + 2) |= (1 << 1);     // M = 1
     *(HPSTimer0Ptr + 2) |= (1 << 0);     // E = 1
     *(HPSTimer0Ptr + 2) &= ~(1 << 2);    // I = 0 Active low
+
+    // HPS1
+    
 
 //  *(KEY_ptr + 2) = 0x01;       // enable interrupts for KEY0
 }
