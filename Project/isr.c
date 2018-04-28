@@ -14,6 +14,8 @@
 extern int ps2Interrupt;      //declared in main.c
 extern int encoderInterrupt;  //declared in main.c
 extern int monitorInterrupt;  //declared in main.c
+extern int adcInterrupt;      //declared in main.c
+
 extern float percent;         //delcared in keypad.c
 
 static unsigned char END = 0; // Used to read the End-Of-Interrupt register to reset timer values
@@ -77,6 +79,15 @@ void HPSTimer1ISR()
     }
 
     END = *(HPSTimer1Ptr + 3);
+}
+
+void HPSTimer2ISR()
+{
+    volatile int* HPSTimer2Ptr = (int*) HPS_TIMER2_BASE;
+    
+    adcInterrupt = 1;
+
+    END = *(HPSTimer2Ptr + 3);
 }
 
 //**End of File**//
