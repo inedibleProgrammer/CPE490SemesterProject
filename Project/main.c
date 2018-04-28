@@ -13,6 +13,7 @@
 #include "JTAG_UART.h"
 #include "ps2.h"
 #include "isr.h"
+#include "pwm.h"
 
 //**Prototype**//
 
@@ -36,10 +37,13 @@ int main(void)
 
 	//**Initialize GUI**//
 	GUI_Setup();
+	//**Initialize PWM**//
+	// PWM_Setup();
 
     //GPIO
     volatile int* GPIOPtr = (int*)0xFF200060;
     *(GPIOPtr + 1) |= (1 << 0); // Set D0 as output
+    // *(GPIOPtr + 1) |= 0x2; // Set D1 as output
 	
 	while(1)
 	{

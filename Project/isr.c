@@ -14,6 +14,7 @@
 extern int ps2Interrupt;      //declared in main.c
 extern int encoderInterrupt;  //declared in main.c
 extern int monitorInterrupt;  //declared in main.c
+extern float percent;         //delcared in keypad.c
 
 static unsigned char END = 0; // Used to read the End-Of-Interrupt register to reset timer values
 
@@ -21,7 +22,7 @@ static unsigned char END = 0; // Used to read the End-Of-Interrupt register to r
 void HPSTimer0ISR()   //half second period
 {
     volatile int* HPSTimer0Ptr = (int*) HPS_TIMER0_BASE;
-  static char flag; //toggle flag
+    static char flag; //toggle flag
   
     ps2Interrupt = 1;
     flag ++;
@@ -41,39 +42,37 @@ void HPSTimer0ISR()   //half second period
 void HPSTimer1ISR()
 {
     volatile int* HPSTimer1Ptr = (int*) HPS_TIMER1_BASE;
-    volatile int* SwitchesPtr = (int*) SW_BASE;
+    volatile int* GPIOPtr = (int*)JP1_BASE;
 
+    static int pwmToggle = 0;
 
-    double switches = ( ( *(SwitchesPtr) & 0x3FF) / 1023.0 );
-    static direction = 0;
-
-    if(switches == 0)
+    if(percent == 0)
     {
-        // *(GPIOPtr) &= ~(1 << 0);
         *(GPIOPtr) = 0;
+        // *(GPIOPtr) &= 0xFFFFFFFD; // 1101
     }
-    else if(switches == 1.0)
+    else if(percent == 1.0)
     {
-        // *(GPIOPtr) |= (1 << 0);
         *(GPIOPtr) = 1;
+        // *(GPIOPtr) |= 0x2; // 0010
     }
     else
     {
-        if(direction == 1)
+        if(pwmToggle == 1)
         {
-            // *(GPIOPtr) &= ~(1 << 0); // D0 = low
-            *(GPIOPtr) = 1;
-            SetPWM(1000, switches);
+            *(GPIOPtr) = 1; // D0 = low
+            // *(GPIOPtr) |= 0x2;
+            SetPWM(1000, percent);
 
-            direction = 0;
+            pwmToggle = 0;
         }
-        else // direction == 0
+        else // pwmToggle == 0
         {
-            // *(GPIOPtr) |= (1 << 0); // D0 = high
-            *(GPIOPtr) = 0;
-            SetPWM( 1000, (1.0 - switches) );
+            *(GPIOPtr) = 0; // D0 = high
+            // *(GPIOPtr) &= 0xFFFFFFFD;
+            SetPWM( 1000, (1.0 - percent) );
 
-            direction = 1;
+            pwmToggle = 1;
         }
     }
 

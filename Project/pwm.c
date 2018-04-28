@@ -1,7 +1,7 @@
 /***************************************************************************************************
 Notes: 
 ***************************************************************************************************/
-
+#include "address_map.h"
 
 /***************************************************************************************************
 Global Variables:
@@ -26,5 +26,10 @@ void SetPWM(unsigned int period, double percent)
     *(HPSTimer1Ptr) = (int)math; // load value
     *(HPSTimer1Ptr + 2) |= (1 << 1); // M = 1
     *(HPSTimer1Ptr + 2) |= (1 << 0); // E = 1
+}
 
+void PWM_Setup(void)
+{
+    volatile int* GPIOPtr = (int*)JP1_BASE;
+    *(GPIOPtr + 1) |= (1 << 1); // D1 output
 }

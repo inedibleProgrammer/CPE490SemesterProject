@@ -175,7 +175,7 @@ void configInterupt()
     *(HPSTimer1Ptr) = 1000000; // load value
     *(HPSTimer1Ptr + 2) |= (1 << 1); // M = 1
     *(HPSTimer1Ptr + 2) |= (1 << 0); // E = 1
-    *(HPSTimer1Ptr + 2) &= ~(1 << 3); // I = 0
+    *(HPSTimer1Ptr + 2) &= ~(1 << 2); // I = 0
 
 //  *(KEY_ptr + 2) = 0x01;       // enable interrupts for KEY0
 }

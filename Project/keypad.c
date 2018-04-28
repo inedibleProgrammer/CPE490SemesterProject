@@ -16,7 +16,8 @@
 #include "JTAG_UART.h"
 
 //**Global Variables**//
-int keyData;	//used int isr.c
+int keyData;	//used in isr.c
+float percent;	//used in isr.c
 extern char enterPress;
 
 //**Function Code**//
@@ -24,10 +25,11 @@ extern char enterPress;
 void Key(void)
 {
 	char key = GetKey(keyData);
-	if(key == 0xB)
+
+	if(key == 0xD)		//invalid key
 		return;
 
-	if(key != 0xA)
+	if( (key != 0xA) && (key != 0xB) && (key != 0xC) )	//is integer
 	{
 		inprpm.iHundred = inprpm.iTen;
 		inprpm.iTen = inprpm.iOne;
@@ -43,14 +45,10 @@ void Key(void)
 		inprpm.cTotal[2] = inprpm.cOne;
 
 		InputRPM_Write(inprpm.cTotal);
-
-		//**Debuging**//
-		//put_jtag(GetCharacter(inprpm.iHundred));
-		//put_jtag(GetCharacter(inprpm.iTen));
-		//put_jtag(GetCharacter(inprpm.iOne));
+		return;
 	}
 
-	if(key == 0xA)
+	if(key == 0xA)			//enter pressed
 	{
 		if(inprpm.cTotal[2] != ' ')
 		{
@@ -59,23 +57,31 @@ void Key(void)
 			InputRPM_Clear();
 			Clear_inprpm();
 
-			//**Debuging**//
-			put_jtag(GetCharacter(setrpm.iHundred));
-			//put_jtag(GetCharacter(setrpm.iTen));
-			//put_jtag(GetCharacter(setrpm.iOne));
-			put_jtag('A');
-
-			if(setrpm.iTotal > 230)
+			if(setrpm.iTotal > 233)
 			{
-				setrpm.iTotal = 230;
+				setrpm.iTotal = 233;
 				setrpm.cTotal[0] = '2';
 				setrpm.cTotal[1] = '3';
-				setrpm.cTotal[2] = '0';
+				setrpm.cTotal[2] = '3';
 			}
 			SetRPM_Write(setrpm.cTotal);
+			percent = setrpm.iTotal / (float) 233;
+			return;
 		}
-
 	}
+	/*
+	volatile int* GPIOPtr = (int*)JP1_BASE;
+	if(key == 0xB)		//forward
+	{
+		*GPIOPtr &= 0xFFFFFFFB;
+		*GPIOPtr |= 0x8;
+	}
+	if(key == 0xC)		//reverse
+	{
+		*GPIOPtr &= 0xFFFFFFF7;
+		*GPIOPtr |= 0x4;
+	}
+	*/
 }
 
 char GetKey(int keyData)
@@ -120,8 +126,14 @@ char GetKey(int keyData)
 		case 0x7D:		//9
 			key = 9;
 			break;
-		default:		//invalid
+		case 0x79:		//+
 			key = 0xB;
+			break;
+		case 0x7B:		//-
+			key = 0xC;
+			break;
+		default:		//invalid
+			key = 0xD;
 			break;
 	}
 	return key;

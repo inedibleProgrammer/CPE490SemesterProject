@@ -21,6 +21,6 @@ Function Prototypes:
             * Controlled by Switch value
 */
 void SetPWM(unsigned int period, double percent);
-
+void PWM_Setup(void);
 
 #endif /* PWM_H_ */
