@@ -36,3 +36,5 @@ void VGA_text(int x, int y, char* text_ptr)
 		++offset;
 	}
 }
+
+//**End of File**//

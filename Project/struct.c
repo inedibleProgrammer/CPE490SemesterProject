@@ -10,9 +10,10 @@
 #include "struct.h"
 
 //**Global Structs**//
-struct RPM inprpm;
-struct RPM setrpm;
-struct RPM actrpm;
+struct Monitor inprpm;
+struct Monitor setrpm;
+struct Monitor actrpm;
+struct Monitor current;
 
 
 char GetCharacter(int key)
@@ -65,3 +66,5 @@ void InitializeStructs(void)
 	setrpm = inprpm;
 	actrpm = inprpm;
 }
+
+//**End of File**//

@@ -15,6 +15,7 @@ extern int ps2Interrupt;      //declared in main.c
 extern int encoderInterrupt;  //declared in main.c
 extern int monitorInterrupt;  //declared in main.c
 extern int adcInterrupt;      //declared in main.c
+extern int encoderValue;      //declared in main.c
 
 extern float percent;         //delcared in keypad.c
 
@@ -28,13 +29,13 @@ void HPSTimer0ISR()   //half second period
   
     ps2Interrupt = 1;
     flag ++;
-    if(flag == 1)
-    {
-        encoderInterrupt = 1;
-    }
     if(flag == 2)
     {
         monitorInterrupt = 1;
+    }
+    if(flag == 4)
+    {
+        encoderInterrupt = 1;
         flag = 0;
     }
   
@@ -88,6 +89,11 @@ void HPSTimer2ISR()
     adcInterrupt = 1;
 
     END = *(HPSTimer2Ptr + 3);
+}
+
+void JP1ISR()
+{
+    encoderValue++;
 }
 
 //**End of File**//

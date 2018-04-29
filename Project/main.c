@@ -14,6 +14,8 @@
 #include "ps2.h"
 #include "isr.h"
 #include "pwm.h"
+#include "adc.h"
+#include "encoder.h"
 
 //**Prototype**//
 
@@ -25,6 +27,8 @@ int adcInterrupt;       //used in isr.c
 
 int goodKey;			//used in ps2.c
 char enterPress;		//used in keypad.c
+
+int encoderValue;
 
 //**Program Code**//
 
@@ -39,21 +43,12 @@ int main(void)
 
 	//**Initialize GUI**//
 	GUI_Setup();
-	//**Initialize PWM**//
-	// PWM_Setup();
 
     //GPIO
     volatile int* GPIOPtr = (int*)0xFF200060;
     *(GPIOPtr + 1) |= (1 << 0); // Set D0 as output
-    // *(GPIOPtr + 1) |= 0x2; // Set D1 as output
 
-    //ADC
-    volatile int* ADCptr = (int*)ADC_BASE;
-    volatile int* channelTwo = (int*)0xFF204008; // ADC_BASE + 2
-    *(ADCptr + 1) |= (1);    // Set ADC to auto mode
 
-    int analogCounter = 0;
-    int analogValue = 0;
 	
 	while(1)
 	{
@@ -64,10 +59,9 @@ int main(void)
 		{
 			ps2Interrupt = 0;
           	PS2_Read();
-          	// put_jtag('A');
+
           	if(goodKey == 1)
             {
-              	
               	Key();
                 goodKey = 0;
             }
@@ -78,7 +72,6 @@ int main(void)
         *******************************************************************************************/
 		if(monitorInterrupt == 1)
 		{
-			//put_jtag('B');
 			monitorInterrupt = 0;
 		}
 
@@ -87,8 +80,7 @@ int main(void)
         *******************************************************************************************/
 		if(encoderInterrupt == 1)
 		{
-			//put_jtag('C');
-			//put_jtag('\n');
+
 			encoderInterrupt = 0;
 		}
 
@@ -97,20 +89,11 @@ int main(void)
         *******************************************************************************************/
         if(adcInterrupt == 1)
         {
-            analogCounter++;
-            analogValue = analogValue + ( (*channelTwo) & 0xFFF); // sample the adc
-
-            if(analogCounter == 200)
-            {
-                analogValue = analogValue / 200; // average it
-
-                analogValue = 0;
-                analogCounter = 0;
-            }
-
             adcInterrupt = 0; // disable flag
+            ADC_Get();
         }
 	}
+
 	int _end_ = 0;
   	return _end_;
 }

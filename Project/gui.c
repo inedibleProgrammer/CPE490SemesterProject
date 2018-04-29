@@ -66,3 +66,5 @@ void Current_Write(char* value)
 {
 	VGA_text(21, 19, value);
 }
+
+//**End of File**//
