@@ -6,7 +6,6 @@
 	Purpose:	prototypes for isr.c
 ***********************************************************/
 
-void TimerISR();
 void PS2ISR(void); //interrupt service routine for the PS2
 void HPSTimer0ISR();
 void HPSTimer1ISR();

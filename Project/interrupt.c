@@ -29,9 +29,10 @@ void __attribute__ ((interrupt)) __cs3_isr_irq (void)
         ButtonsISR ();
 */
 
-    if(interrupt_ID == MPCORE_PRIV_TIMER_IRQ)
-        TimerISR();
-    else if(interrupt_ID == HPS_TIMER0_IRQ)
+    //if(interrupt_ID == MPCORE_PRIV_TIMER_IRQ)
+       // TimerISR();
+
+    if(interrupt_ID == HPS_TIMER0_IRQ)
         HPSTimer0ISR();  
     else if(interrupt_ID == HPS_TIMER1_IRQ)
         HPSTimer1ISR();
@@ -171,7 +172,7 @@ void configInterupt()
     volatile int* GPIOPtr = (int*)0xFF200060;
 
     // Private Timer
-    *(timerPtr) = 200000;           // Interrupt every 0.100s
+    *(timerPtr) = 2000;             // Interrupt every 0.001s
     *(timerPtr + 2) |= (100 << 8);  // Prescale 100
     *(timerPtr + 2) |= 0x07;        // Turn on I, A, and E
 

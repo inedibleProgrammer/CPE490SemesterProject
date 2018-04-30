@@ -16,18 +16,12 @@ extern int encoderInterrupt;  //declared in main.c
 extern int monitorInterrupt;  //declared in main.c
 extern int adcInterrupt;      //declared in main.c
 extern int encoderValue;      //declared in main.c
-extern int pidInterrupt;      //declared in main.c
 
 extern float percent;         //delcared in keypad.c
 
 static unsigned char END = 0; // Used to read the End-Of-Interrupt register to reset timer values
 
 //**Interrupt Service Routines**//
-void TimerISR()
-{
-    pidInterrupt = 1;
-}
-
 void HPSTimer0ISR()   //half second period
 {
     volatile int* HPSTimer0Ptr = (int*) HPS_TIMER0_BASE;

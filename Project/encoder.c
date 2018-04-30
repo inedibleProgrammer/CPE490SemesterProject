@@ -5,11 +5,26 @@
 #include "JTAG_UART.h"
 
 
-// int encoderValue;	//used in isr.c
+int encoderValue;	//used in isr.c
 
 void GetActualRpm(void)
 {
+    static int time;
+    static unsigned long longTime;
+    struct Digits longTimeSeparated;
 
+    longTime = longTime + encoderValue;
+    actrpm.iTotal = encoderValue * (2.0/3.0);
+    encoderValue = 0;
+    
+    longTimeSeparated = DigitSeparator(longTime);
+    put_jtag(GetDigit(longTimeSeparated.thousands));
+    put_jtag(GetDigit(longTimeSeparated.hundreds));
+    put_jtag(GetDigit(longTimeSeparated.tens));
+    put_jtag(GetDigit(longTimeSeparated.ones));
+    put_jtag('\n');
+
+    longTime = 0;
 }
 
 void PrintActualRpm(void)
@@ -36,8 +51,8 @@ void PrintActualRpm(void)
         put_jtag('\n');
         put_jtag('\n');
 */
-    // if(actrpm.cTotal[0] == '0');
-       // actrpm.cTotal[0] = ' ';
+    if(actrpm.cTotal[0] == '0');
+        actrpm.cTotal[0] = ' ';
     ActualRPM_Write(actrpm.cTotal);
 }
 
