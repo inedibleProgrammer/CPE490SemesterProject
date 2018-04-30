@@ -14,6 +14,9 @@
 extern int ps2Interrupt;      //declared in main.c
 extern int encoderInterrupt;  //declared in main.c
 extern int monitorInterrupt;  //declared in main.c
+extern int adcInterrupt;      //declared in main.c
+extern int encoderValue;      //declared in main.c
+
 extern float percent;         //delcared in keypad.c
 
 static unsigned char END = 0; // Used to read the End-Of-Interrupt register to reset timer values
@@ -26,13 +29,13 @@ void HPSTimer0ISR()   //half second period
   
     ps2Interrupt = 1;
     flag ++;
-    if(flag == 1)
-    {
-        encoderInterrupt = 1;
-    }
     if(flag == 2)
     {
         monitorInterrupt = 1;
+    }
+    if(flag == 4)
+    {
+        encoderInterrupt = 1;
         flag = 0;
     }
   
@@ -48,19 +51,19 @@ void HPSTimer1ISR()
 
     if(percent == 0)
     {
-        *(GPIOPtr) = 0;
+        *(GPIOPtr) &= ~(1 << 0);
         // *(GPIOPtr) &= 0xFFFFFFFD; // 1101
     }
     else if(percent == 1.0)
     {
-        *(GPIOPtr) = 1;
+        *(GPIOPtr) |= (1 << 0);
         // *(GPIOPtr) |= 0x2; // 0010
     }
     else
     {
         if(pwmToggle == 1)
         {
-            *(GPIOPtr) = 1; // D0 = low
+            *(GPIOPtr) |= (1 << 0); // D0 = low
             // *(GPIOPtr) |= 0x2;
             SetPWM(1000, percent);
 
@@ -68,7 +71,7 @@ void HPSTimer1ISR()
         }
         else // pwmToggle == 0
         {
-            *(GPIOPtr) = 0; // D0 = high
+            *(GPIOPtr) &= ~(1 << 0); // D0 = high
             // *(GPIOPtr) &= 0xFFFFFFFD;
             SetPWM( 1000, (1.0 - percent) );
 
@@ -77,6 +80,23 @@ void HPSTimer1ISR()
     }
 
     END = *(HPSTimer1Ptr + 3);
+}
+
+void HPSTimer2ISR()
+{
+    volatile int* HPSTimer2Ptr = (int*) HPS_TIMER2_BASE;
+    
+    adcInterrupt = 1;
+
+    END = *(HPSTimer2Ptr + 3);
+}
+
+void JP1ISR()
+{
+    volatile int* GPIOPtr = (int*)JP1_BASE;
+    encoderValue++;
+
+    *(GPIOPtr + 3) |= (1 << 3);
 }
 
 //**End of File**//

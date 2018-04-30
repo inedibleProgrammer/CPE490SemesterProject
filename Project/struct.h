@@ -7,13 +7,13 @@
 ***********************************************************/
 
 //**Global Structs**//
-extern struct RPM inprpm;
-extern struct RPM setrpm;
-extern struct RPM actrpm;
-extern struct RPM currpm;
+extern struct Monitor inprpm;
+extern struct Monitor setrpm;
+extern struct Monitor actrpm;
+extern struct Monitor current;
 
 //**Struct Definition**//
-struct RPM
+struct Monitor
 {
 	int iHundred;
 	int iTen;
@@ -31,3 +31,7 @@ char GetCharacter(int);
 void Clear_inprpm();
 void Total_inprpm(void);
 void InitializeStructs(void);
+struct Monitor RPM_Splitter(long value);
+struct Monitor RPM_Characters (struct Monitor);
+
+//**End of File**//

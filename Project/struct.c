@@ -10,9 +10,10 @@
 #include "struct.h"
 
 //**Global Structs**//
-struct RPM inprpm;
-struct RPM setrpm;
-struct RPM actrpm;
+struct Monitor inprpm;
+struct Monitor setrpm;
+struct Monitor actrpm;
+struct Monitor current;
 
 
 char GetCharacter(int key)
@@ -65,3 +66,36 @@ void InitializeStructs(void)
 	setrpm = inprpm;
 	actrpm = inprpm;
 }
+
+struct Monitor RPM_Splitter(long value)
+{
+    struct Monitor structure;
+	structure.iHundred = 0;
+	structure.iTen = 0;
+	structure.iOne = 0;
+	structure.iTotal = 0;
+
+	structure.cHundred = ' ';
+	structure.cTen = ' ';
+	structure.cOne = ' ';
+	structure.cTotal[0] = ' ';
+	structure.cTotal[1] = ' ';
+	structure.cTotal[2] = ' ';
+
+    structure.iHundred  = (value / 100);
+    structure.iTen      = ((value % 100) / 10);
+    structure.iOne      = ((value % 100)% 10);
+    structure.iTotal	= value;
+
+    return structure;
+}
+
+struct Monitor RPM_Characters (struct Monitor structure)
+{
+	structure.cTotal[0] = GetCharacter(structure.iHundred);
+	structure.cTotal[1] = GetCharacter(structure.iTen);
+	structure.cTotal[2] = GetCharacter(structure.iOne);
+	return structure;
+}
+
+//**End of File**//

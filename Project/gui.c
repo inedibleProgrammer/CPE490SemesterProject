@@ -35,6 +35,17 @@ void GUI_Setup(void)
 	VGA_text(12, 19, current);
 }
 
+void Print_Bars(int value)
+{
+	int percent = (value / (float) 233);
+	int size = (200 * percent);								//turn percent into number of pixels
+	int inverseSize = 200 - size;							//get the negative size
+	VGA_box(260 - inverseSize, 150, 260, 165, Aubergine);	//print negative bar
+	VGA_box(60, 150, 60 + size, 165, Burgandy);				//print progress bar
+	if(percent == 0)											//if the total is zero
+		VGA_box(60, 150, 60, 165, Aubergine);					//clear lowest end of progress bar
+}
+
 void InputRPM_Write(char* value)
 {
 	VGA_text(21, 10, value);
@@ -66,3 +77,5 @@ void Current_Write(char* value)
 {
 	VGA_text(21, 19, value);
 }
+
+//**End of File**//

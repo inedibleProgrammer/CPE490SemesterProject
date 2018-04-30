@@ -14,6 +14,9 @@
 #include "ps2.h"
 #include "isr.h"
 #include "pwm.h"
+#include "adc.h"
+#include "encoder.h"
+#include "struct.h"
 
 //**Prototype**//
 
@@ -21,6 +24,8 @@
 int ps2Interrupt;		//used in isr.c
 int encoderInterrupt;	//used in isr.c
 int monitorInterrupt;	//used in isr.c
+int adcInterrupt;       //used in isr.c
+
 int goodKey;			//used in ps2.c
 char enterPress;		//used in keypad.c
 
@@ -37,40 +42,63 @@ int main(void)
 
 	//**Initialize GUI**//
 	GUI_Setup();
-	//**Initialize PWM**//
-	// PWM_Setup();
+
+	//**Initialize Structs**//
+	InitializeStructs();
 
     //GPIO
     volatile int* GPIOPtr = (int*)0xFF200060;
     *(GPIOPtr + 1) |= (1 << 0); // Set D0 as output
-    // *(GPIOPtr + 1) |= 0x2; // Set D1 as output
+
+
 	
 	while(1)
 	{
+        /*******************************************************************************************
+        KEYBOARD:
+        *******************************************************************************************/
 		if(ps2Interrupt == 1)
 		{
 			ps2Interrupt = 0;
           	PS2_Read();
-          	// put_jtag('A');
+
           	if(goodKey == 1)
             {
-              	
               	Key();
                 goodKey = 0;
             }
 		}
+
+        /*******************************************************************************************
+        MONITOR:
+        *******************************************************************************************/
 		if(monitorInterrupt == 1)
 		{
-			//put_jtag('B');
 			monitorInterrupt = 0;
+			//Print_Bars(actrpm.iTotal);
 		}
+
+        /*******************************************************************************************
+        ENCODER:
+        *******************************************************************************************/
 		if(encoderInterrupt == 1)
 		{
-			//put_jtag('C');
-			//put_jtag('\n');
 			encoderInterrupt = 0;
+			GetActualRpm();
+			PrintActualRpm();
+
 		}
+
+        /*******************************************************************************************
+        ADC:
+        *******************************************************************************************/
+        if(adcInterrupt == 1)
+        {
+            adcInterrupt = 0; // disable flag
+            ADC_Get();
+        }
 	}
+
 	int _end_ = 0;
   	return _end_;
 }

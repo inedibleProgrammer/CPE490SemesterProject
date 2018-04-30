@@ -36,6 +36,10 @@ void __attribute__ ((interrupt)) __cs3_isr_irq (void)
         HPSTimer0ISR();  
     else if(interrupt_ID == HPS_TIMER1_IRQ)
         HPSTimer1ISR();
+    else if(interrupt_ID == HPS_TIMER2_IRQ)
+        HPSTimer2ISR();
+    else if(interrupt_ID == JP1_IRQ)
+        JP1ISR();
     else
         while (1);                          // if unexpected, then stay here
 
@@ -69,7 +73,10 @@ void __attribute__ ((interrupt)) __cs3_isr_pabort (void)
 
 void __attribute__ ((interrupt)) __cs3_isr_dabort (void)
 {
-    while(1);
+    while(1)
+	{
+		return;
+	}
 }
 
 void __attribute__ ((interrupt)) __cs3_isr_fiq (void)
@@ -112,7 +119,9 @@ void config_GIC(void) // STEP 3 IN SECTION 3.1 OF USING THE ARM GENERIC INTERRUP
     config_interrupt (PS2_IRQ, CPU0);
     config_interrupt (HPS_TIMER0_IRQ, CPU0);
     config_interrupt (HPS_TIMER1_IRQ, CPU0);
-    
+    config_interrupt (HPS_TIMER2_IRQ, CPU0);
+    config_interrupt (JP1_IRQ, CPU0);
+
     // Set Interrupt Priority Mask Register (ICCPMR). Enable interrupts of all priorities 
     address = MPCORE_GIC_CPUIF + ICCPMR;
     *(int *) address = 0xFFFF;       
@@ -158,6 +167,10 @@ void configInterupt()
 
     volatile int* HPSTimer1Ptr = (int*) HPS_TIMER1_BASE;
 
+    volatile int* HPSTimer2Ptr = (int*) HPS_TIMER2_BASE;
+
+    volatile int* GPIOPtr = (int*)0xFF200060;
+
     // Private Timer
     *(timerPtr) = 2000;             // Interrupt every 0.001s
     *(timerPtr + 2) |= (100 << 8);  // Prescale 100
@@ -177,5 +190,16 @@ void configInterupt()
     *(HPSTimer1Ptr + 2) |= (1 << 0); // E = 1
     *(HPSTimer1Ptr + 2) &= ~(1 << 2); // I = 0
 
-//  *(KEY_ptr + 2) = 0x01;       // enable interrupts for KEY0
+    // HPS2 used for ADC
+    *(HPSTimer2Ptr + 2) &= ~(1 << 0); // E = 0
+    *(HPSTimer2Ptr) = 125000; // load value
+    *(HPSTimer2Ptr + 2) |= (1 << 1); // M = 1
+    *(HPSTimer2Ptr + 2) |= (1 << 0); // E = 1
+    *(HPSTimer2Ptr + 2) &= ~(1 << 2); // I = 0
+
+    // JP1 Interrupt
+    *(GPIOPtr + 1) &= ~(1 << 3); // Set as input
+    *(GPIOPtr + 2) |=  (1 << 3); // Activate interrupt
 }
+
+//**End of File**//
